@@ -1,0 +1,34 @@
+<form (ngSubmit)="onSignUp()" class="singup-form">
+  <div class="emailContainer">
+    <label for="email">Enter your E-mail or Nickname</label>
+    <input
+      id="email"
+      class="email"
+      type="email"
+      placeholder="Enter your email or Nickname"
+      name="email"
+      [(ngModel)]="data.email"
+      required
+    />
+    if (!emailError) {
+    <p class="error">emailError</p>
+    }
+  </div>
+
+  <div class="passwdContainer">
+    <label for="password">Password</label>
+    <input
+      id="password"
+      class="password"
+      type="password"
+      placeholder="Example@1234"
+      name="password"
+      [(ngModel)]="data.password"
+      (ngModelChange)="onPasswordChange($event)"
+      required
+    />
+    if (!emailError) {
+        <p class="error">passwdError</p>
+    }
+  </div>
+</form>

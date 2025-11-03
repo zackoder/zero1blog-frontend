@@ -1,5 +1,4 @@
 <form (ngSubmit)="onLogin()" class="log-in_form">
-  
   <div class="emailContainer">
     <label for="email">Enter your E-mail or Nickname</label>
     <input
@@ -25,43 +24,6 @@
       (ngModelChange)="onPasswordChange($event)"
       required
     />
-  </div>
-
-  <div class="password-requirements">
-    <p
-      [class.valid]="passwordValidation.hasLowerCase"
-      [class.invalid]="!passwordValidation.hasLowerCase"
-    >
-      {{ passwordValidation.hasLowerCase ? "✓" : "✗" }} At least one lowercase letter
-    </p>
-
-    <p
-      [class.valid]="passwordValidation.hasUpperCase"
-      [class.invalid]="!passwordValidation.hasUpperCase"
-    >
-      {{ passwordValidation.hasUpperCase ? "✓" : "✗" }} At least one uppercase letter
-    </p>
-
-    <p
-      [class.valid]="passwordValidation.hasNumber"
-      [class.invalid]="!passwordValidation.hasNumber"
-    >
-      {{ passwordValidation.hasNumber ? "✓" : "✗" }} At least one number
-    </p>
-
-    <p
-      [class.valid]="passwordValidation.hasSpecialChar"
-      [class.invalid]="!passwordValidation.hasSpecialChar"
-    >
-      {{ passwordValidation.hasSpecialChar ? "✓" : "✗" }} At least one special character
-    </p>
-
-    <p
-      [class.valid]="passwordValidation.hasMinLength"
-      [class.invalid]="!passwordValidation.hasMinLength"
-    >
-      {{ passwordValidation.hasMinLength ? "✓" : "✗" }} At least 8 characters
-    </p>
   </div>
 
   @if (errorMessage) {

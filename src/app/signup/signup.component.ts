@@ -5,14 +5,140 @@ import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-signup',
+  standalone: true,
   imports: [FormsModule, CommonModule],
   templateUrl: './signup.component.html',
-  styleUrl: './signup.component.css'
+  styleUrls: ['./signup.component.css'],
 })
-
 export class SignupComponent {
   data = {
-    email : '',
-    passwd:''
+    nickname: '',
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    bio: '',
+  };
+
+  isLoading = false;
+
+  errorMsg = {
+    errNickname: '',
+    errFirstName: '',
+    errLastName: '',
+    errEmail: '',
+    errPassword: '',
+    errConfirmPassword: '',
+    errBio: '',
+  };
+
+  passwordValidation = {
+    hasLowerCase: false,
+    hasUpperCase: false,
+    hasNumber: false,
+    hasSpecialChar: false,
+    hasMinLength: false,
+  };
+
+  constructor(private http: HttpClient) {}
+
+  onSignUp() {
+    this.clearErrors();
+
+    if (!this.validData()) {
+      return;
+    }
+    interface SignupResponse {
+      success: boolean;
+      message?: string;
+      data?: any;
+    }
+
+    this.isLoading = true;
+    this.http
+      .post<SignupResponse>('http://localhost:8080/api/register', this.data)
+      .subscribe({
+        next: (response) => {
+          console.log('Signup successful:', response);
+          if (!response.success) {
+            if (response.message?.includes('Nickname')) {
+              this.errorMsg.errNickname = response.message;
+            } else if (response.message?.includes('Email')) {
+              this.errorMsg.errEmail = response.message;
+            }
+            return;
+          }
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Signup failed:', error);
+          this.isLoading = false;
+        },
+      });
+  }
+
+  clearErrors() {
+    this.errorMsg = {
+      errNickname: '',
+      errFirstName: '',
+      errLastName: '',
+      errEmail: '',
+      errPassword: '',
+      errConfirmPassword: '',
+      errBio: '',
+    };
+  }
+
+  validData(): boolean {
+    let valid = true;
+
+    if (!this.data.email.trim()) {
+      this.errorMsg.errEmail = 'You need to enter your email or nickname';
+      valid = false;
+    }
+
+    if (!this.data.password) {
+      this.errorMsg.errPassword = 'Enter your password';
+      valid = false;
+    }
+
+    if (this.data.password !== this.data.confirmPassword) {
+      this.errorMsg.errConfirmPassword = 'Passwords do not match';
+      valid = false;
+    }
+
+    if (!this.isPasswordValid()) {
+      this.errorMsg.errPassword =
+        'Password must meet all the required criteria';
+      valid = false;
+    }
+
+    return valid;
+  }
+
+  onPasswordChange(value: string) {
+    this.data.password = value;
+    this.validatePassword(value);
+  }
+
+  validatePassword(password: string) {
+    this.passwordValidation.hasLowerCase = /[a-z]/.test(password);
+    this.passwordValidation.hasUpperCase = /[A-Z]/.test(password);
+    this.passwordValidation.hasNumber = /[0-9]/.test(password);
+    this.passwordValidation.hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(
+      password
+    );
+    this.passwordValidation.hasMinLength = password.length >= 8;
+  }
+
+  isPasswordValid(): boolean {
+    return (
+      this.passwordValidation.hasLowerCase &&
+      this.passwordValidation.hasUpperCase &&
+      this.passwordValidation.hasNumber &&
+      this.passwordValidation.hasSpecialChar &&
+      this.passwordValidation.hasMinLength
+    );
   }
 }

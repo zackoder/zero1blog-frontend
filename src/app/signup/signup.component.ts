@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-signup',
@@ -41,7 +42,7 @@ export class SignupComponent {
     hasMinLength: false,
   };
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   onSignUp() {
     this.clearErrors();
@@ -60,7 +61,6 @@ export class SignupComponent {
       .post<SignupResponse>('http://localhost:8080/api/register', this.data)
       .subscribe({
         next: (response) => {
-          console.log('Signup successful:', response);
           if (!response.success) {
             if (response.message?.includes('Nickname')) {
               this.errorMsg.errNickname = response.message;
@@ -68,6 +68,8 @@ export class SignupComponent {
               this.errorMsg.errEmail = response.message;
             }
             return;
+          } else {
+            this.router.navigate(["/login"]);
           }
           this.isLoading = false;
         },
